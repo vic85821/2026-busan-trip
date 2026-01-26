@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>釜山浪漫之旅 2026</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4facfe;
+            --secondary: #00f2fe;
+            --sunset-start: #f6d365;
+            --sunset-end: #fda085;
+            --twilight: #a18cd1;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --text-sub: #666;
+            --accent-food: #ff7e5f;
+            --accent-spot: #4facfe;
+            --accent-shop: #a18cd1;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* Nav bar space */
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
+            padding: 20px;
+            color: white;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        header h1 { margin: 0; font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        header .subtitle { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+        
+        /* Weather Widget Mini */
+        .weather-bar {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 10px;
+            padding: 8px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        /* Container */
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+
+        /* Day Selector */
+        .day-scroller {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .day-scroller::-webkit-scrollbar { display: none; }
+        
+        .day-chip {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        .day-chip.active {
+            background: linear-gradient(to right, var(--sunset-start) 0%, var(--sunset-end) 100%);
+            color: white;
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: relative;
+            border-left: 5px solid transparent;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card.spot { border-left-color: var(--accent-spot); }
+        .card.food { border-left-color: var(--accent-food); }
+        .card.shop { border-left-color: var(--accent-shop); }
+        .card.transport { border-left-color: #666; }
+
+        .card-header { display: flex; justify-content: space-between; align-items: start; }
+        .card-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; color: #333; }
+        .card-time { font-size: 0.85rem; color: #888; background: #eee; padding: 2px 6px; border-radius: 4px; }
+        
+        .tags { display: flex; gap: 5px; flex-wrap: wrap; margin: 8px 0; }
+        .tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+        .tag.must-eat { background: #ffeffe; color: #ff5e62; border: 1px solid #ff5e62; }
+        .tag.vbp { background: #e0f7fa; color: #0097a7; border: 1px solid #0097a7; }
+        .tag.resv { background: #fff3e0; color: #ef6c00; border: 1px solid #ef6c00; }
+        
+        .guide-tip {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 10px;
+            border-left: 3px solid #ffd700;
+        }
+        .guide-tip strong { color: #333; }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: #03C75A; /* Naver Green */
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .action-btn i { margin-right: 5px; }
+
+        /* Tools Section */
+        .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .tool-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .tool-card h3 { margin-top: 0; color: var(--text-main); font-size: 1rem; }
+        textarea, input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; margin-bottom: 5px; }
+        .budget-display { font-size: 1.5rem; font-weight: bold; color: var(--accent-food); text-align: center; margin: 10px 0; }
+
+        /* Navigation Bottom */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 200;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #999;
+            text-decoration: none;
+            width: 33%;
+            cursor: pointer;
+        }
+        .nav-item.active { color: var(--accent-spot); }
+        .nav-item i { font-size: 1.2rem; margin-bottom: 3px; }
+
+        /* Views */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        
+        .weather-info-header {
+            text-align: center; font-size: 0.8rem; color: #fff; margin-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <h1>釜山蔚藍之旅 🌊</h1>
+    <div class="subtitle">10天9夜 | 廣安里 • 海雲台 • 南浦洞</div>
+    <div class="weather-bar" onclick="window.open('https://www.accuweather.com/en/kr/busan/222888/weather-forecast/222888', '_blank')">
+        <span><i class="fas fa-cloud-sun"></i> 釜山即時天氣</span>
+        <span>點擊查看詳情 <i class="fas fa-chevron-right"></i></span>
+    </div>
+</header>
+
+<!-- Main Content -->
+<div class="container">
+
+    <!-- ITINERARY VIEW -->
+    <div id="view-itinerary" class="view-section active">
+        <!-- Day Selector -->
+        <div class="day-scroller" id="dayScroller">
+            <!-- JS will populate this -->
+        </div>
+
+        <div id="itineraryContent" style="margin-top: 15px;">
+            <!-- JS will populate this -->
+        </div>
+    </div>
+
+    <!-- TOOLS VIEW -->
+    <div id="view-tools" class="view-section">
+        <div class="tools-grid">
+            <div class="tool-card" style="grid-column: span 2;">
+                <h3><i class="fas fa-plane"></i> 航班資訊</h3>
+                <p><strong>去程 (2/14):</strong> CI186 15:40 - 18:50</p>
+                <p><strong>回程 (2/23):</strong> CI189 11:50 - 13:30</p>
+                <p><strong>緊急聯絡:</strong> 韓國報警 112 | 急救 119</p>
+            </div>
+            
+            <div class="tool-card" style="grid-column: span 2;">
+                <h3><i class="fas fa-hotel"></i> 住宿資訊</h3>
+                <div style="font-size: 0.9rem; line-height: 1.6;">
+                    <p><strong>D1-D3 廣安里:</strong> 民樂水邊路 49 (民宿)</p>
+                    <p><strong>D4-D6 海雲台:</strong> L7 Haeundae</p>
+                    <p><strong>D7-D9 南浦:</strong> Stanford Hotel Busan</p>
+                </div>
+            </div>
+
+            <div class="tool-card" style="grid-column: span 2;">
+                <h3><i class="fas fa-calculator"></i> 簡易記帳</h3>
+                <div class="budget-display">₩ <span id="totalSpent">0</span></div>
+                <input type="number" id="expenseAmount" placeholder="金額 (韓幣)">
+                <input type="text" id="expenseNote" placeholder="項目 (如: 烤肉)">
+                <button onclick="addExpense()" style="width:100%; background:var(--accent-spot); color:white; border:none; padding:10px; border-radius:6px; margin-top:5px;">新增支出</button>
+                <ul id="expenseList" style="padding-left: 20px; font-size: 0.9rem; color:#555;"></ul>
+            </div>
+
+            <div class="tool-card" style="grid-column: span 2;">
+                <h3><i class="fas fa-pen"></i> 心得筆記</h3>
+                <textarea id="tripNotes" rows="6" placeholder="在這裡寫下旅行的心得..." oninput="saveNotes()"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="switchView('itinerary', this)">
+        <i class="fas fa-map-marked-alt"></i>
+        <span>行程</span>
+    </div>
+    <div class="nav-item" onclick="switchView('tools', this)">
+        <i class="fas fa-toolbox"></i>
+        <span>工具</span>
+    </div>
+</div>
+
+<script>
+    // --- Data Source ---
+    const tripData = [
+        {
+            date: "2/14 (六)",
+            title: "Day 1 抵達與廣安里夜景",
+            events: [
+                { type: "transport", time: "15:40", title: "飛機 CI186", desc: "TPE -> PUS (18:50 抵達)" },
+                { type: "spot", time: "20:00", title: "廣安里無人機表演", desc: "每週六限定！海邊觀賞。", link: "https://map.naver.com/v5/search/Gwangalli%20Beach" },
+                { type: "food", time: "晚餐", title: "水邊最高豬肉湯飯 本店", desc: "必點：豬肉湯飯。排隊名店。", tags: ["必吃⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/%EC%88%98%EB%B3%80%EC%B5%9C%EA%B3%A0%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5" },
+                { type: "hotel", time: "住宿", title: "廣安里49 民宿", desc: "民樂水邊路 49" }
+            ]
+        },
+        {
+            date: "2/15 (日)",
+            title: "Day 2 Spa Land 與購物",
+            events: [
+                { type: "spot", time: "早上", title: "SPA LAND Centum City", desc: "五星級汗蒸幕。用 VBP 可免費4小時。", tags: ["VBP免費", "需自備護膚品"], link: "https://reurl.cc/gDxApR", guide: "注意：2/16-17休息，所以今天先來！裡面泡麵和甜米釀必點。" },
+                { type: "shop", time: "下午", title: "新世界百貨 Centum City", desc: "B1/B2 潮牌天堂 (Covernat, What it isn't, National Geographic)。", link: "https://map.naver.com/v5/search/Shinsegae%20Centum%20City" },
+                { type: "spot", time: "18:30", title: "Yacht Holic 遊艇體驗", desc: "享受海上夜景。", tags: ["VBP適用"], link: "https://map.naver.com/v5/search/Yacht%20Holic" }
+            ]
+        },
+        {
+            date: "2/16 (一)",
+            title: "Day 3 色彩鑑定與廣安美食",
+            events: [
+                { type: "food", time: "09:00", title: "Working Holiday 早午餐", desc: "海景第一排早午餐。", link: "https://naver.me/5A3QDoxv" },
+                { type: "spot", time: "11:00", title: "色彩鑑定 & 證件照", desc: "BBDI Studio / Lavieensu (西面)", link: "https://map.naver.com/v5/search/Seomyeon" },
+                { type: "food", time: "午餐", title: "Nasari Sigdang (나사리식당)", desc: "最推：海鮮總匯刀削麵。", tags: ["必吃", "海景"], link: "https://naver.me/FFSDywqU" },
+                { type: "food", time: "晚餐", title: "彥陽烤牛肉 廣安里店", desc: "傳統韓式烤牛肉。", link: "https://map.naver.com/v5/search/%EC%96%B8%EC%96%91%EB%B6%88%EA%B3%A0%EA%B8%B0%20%EA%B4%91%EC%95%88" }
+            ]
+        },
+        {
+            date: "2/17 (二)",
+            title: "Day 4 海雲台與膠囊列車",
+            events: [
+                { type: "transport", time: "早上", title: "移動至海雲台 L7 飯店", desc: "先寄放行李" },
+                { type: "transport", time: "交通", title: "海岸列車 -> 松亭站", desc: "前往 Luge", tags: ["VBP適用"] },
+                { type: "spot", time: "活動", title: "Skyline Luge 滑車", desc: "玩兩趟！可以用 VBP 兌換。", tags: ["VBP免費"], link: "https://reurl.cc/3xRnKR" },
+                { type: "spot", time: "日落", title: "Busan X The Sky", desc: "最高星巴克，看日夜景交替。", tags: ["VBP免費"], link: "https://reurl.cc/jDaEm2" },
+                { type: "food", time: "晚餐", title: "味贊王烤肉 海雲台店", desc: "必點：豬頸肉、冷麵、泡菜豬肉湯。", tags: ["必吃", "需排隊"], link: "https://reurl.cc/M8zEW3" },
+                { type: "food", time: "宵夜", title: "密陽豬肉湯飯", desc: "海雲台大道上，24小時營業。", link: "https://naver.me/FMA6Dghu" }
+            ]
+        },
+        {
+            date: "2/18 (三)",
+            title: "Day 5 樂天樂園與青沙浦",
+            events: [
+                { type: "spot", time: "白天", title: "樂天世界 / Outlet", desc: "樂園可用 VBP 兌換。", tags: ["VBP免費"], link: "https://map.naver.com/v5/search/Lotte%20World%20Busan" },
+                { type: "food", time: "點心", title: "自然道鹽麵包", desc: "尾浦站附近，必買！", tags: ["必買"], link: "https://map.naver.com/v5/search/%EC%9E%90%EC%97%B0%EB%8F%84%EC%86%8C%EA%B8%88%EB%B9%B5" },
+                { type: "transport", time: "17:00", title: "天空膠囊列車", desc: "預約代號 0731。尾浦 -> 青沙浦。", tags: ["重要預約"], link: "https://map.naver.com/v5/search/Blue%20Line%20Park" },
+                { type: "spot", time: "傍晚", title: "青沙浦平交道 & 扇貝街", desc: "拍灌籃高手平交道。", guide: "走路10分鐘可到扇貝一條街。" },
+                { type: "food", time: "晚餐", title: "道熙家 (Dohee-ga) 烤貝", desc: "推薦：綜合烤貝+海鮮拉麵。", tags: ["海景第一排"], link: "https://reurl.cc/y7AVka" },
+                { type: "food", time: "宵夜", title: "海雲台市場", desc: "海鮮煎餅、年糕 (外帶回飯店吃)。", link: "https://map.naver.com/v5/search/Haeundae%20Market" }
+            ]
+        },
+        {
+            date: "2/19 (四)",
+            title: "Day 6 青松冰谷一日遊",
+            events: [
+                { type: "transport", time: "08:00", title: "海雲台7號出口集合", desc: "一日遊團體集合點", tags: ["準時集合"] },
+                { type: "spot", time: "全天", title: "青松冰谷 & 海岸村恰恰恰", desc: "浦頂天空步道", guide: "山區較冷，記得穿保暖。" },
+                { type: "hotel", time: "住宿", title: "L7 海雲台", desc: "續住" }
+            ]
+        },
+        {
+            date: "2/20 (五)",
+            title: "Day 7 移動至南浦洞",
+            events: [
+                { type: "transport", time: "早上", title: "移動至 Stanford Hotel", desc: "南浦洞" },
+                { type: "food", time: "午餐", title: "札嘎其市場", desc: "吃海鮮！", link: "https://map.naver.com/v5/search/Jagalchi%20Market" },
+                { type: "food", time: "點心", title: "富平罐頭市場", desc: "必吃：Milgot 年糕。", tags: ["必吃"], link: "https://map.naver.com/v5/search/Bupyeong%20Kkangtong%20Market" },
+                { type: "shop", time: "下午", title: "國際市場 & 光復路", desc: "買棉被、逛飾品。預留 2-3 小時。", link: "https://map.naver.com/v5/search/Gukje%20Market" },
+                { type: "spot", time: "休息", title: "Foot Bath Cafe View", desc: "泡腳咖啡廳，緩解走路疲勞。", link: "https://map.naver.com/v5/search/Busan%20Foot%20Bath" }
+            ]
+        },
+        {
+            date: "2/21 (六)",
+            title: "Day 8 影島藝術之旅",
+            events: [
+                { type: "spot", time: "上午", title: "影島 ARTE Museum", desc: "沈浸式光影藝術，媲美 TeamLab。", tags: ["必去⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/Arte%20Museum%20Busan" },
+                { type: "spot", time: "下午", title: "白淺灘文化村", desc: "沿海步道，適合拍照。", link: "https://map.naver.com/v5/search/Huinnyeoul%20Culture%20Village" },
+                { type: "food", time: "下午茶", title: "Thrilling on the mug", desc: "超美海景咖啡廳。", link: "https://map.naver.com/v5/search/Thrilling%20on%20the%20mug" }
+            ]
+        },
+        {
+            date: "2/22 (日)",
+            title: "Day 9 甘川文化村與松島",
+            events: [
+                { type: "spot", time: "上午", title: "甘川文化村", desc: "小王子打卡點。", tags: ["必去"], link: "https://map.naver.com/v5/search/Gamcheon%20Culture%20Village" },
+                { type: "spot", time: "體驗", title: "韓服體驗", desc: "預計換裝拍攝 1.5 小時。" },
+                { type: "transport", time: "交通", title: "Uber 至松島", desc: "約 15-20 分鐘車程。" },
+                { type: "spot", time: "下午", title: "松島海上纜車", desc: "水晶車廂看海景。", tags: ["必去⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/Songdo%20Marine%20Cable%20Car" }
+            ]
+        },
+        {
+            date: "2/23 (一)",
+            title: "Day 10 回程",
+            events: [
+                { type: "transport", time: "11:50", title: "飛機 CI189", desc: "PUS -> TPE (13:30 抵達)", tags: ["再見釜山"] }
+            ]
+        }
+    ];
+
+    // --- App Logic ---
+    let currentDayIndex = 0;
+
+    function init() {
+        renderDayScroller();
+        renderItinerary(0);
+        loadExpenses();
+        loadNotes();
+    }
+
+    function renderDayScroller() {
+        const scroller = document.getElementById('dayScroller');
+        scroller.innerHTML = '';
+        tripData.forEach((day, index) => {
+            const chip = document.createElement('div');
+            chip.className = `day-chip ${index === 0 ? 'active' : ''}`;
+            chip.innerText = day.date.split(' ')[0]; // Show only date
+            chip.onclick = () => {
+                document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                renderItinerary(index);
+            };
+            scroller.appendChild(chip);
+        });
+    }
+
+    function renderItinerary(index) {
+        const container = document.getElementById('itineraryContent');
+        const day = tripData[index];
+        
+        let html = `<h2 style="margin-left:5px; margin-bottom:15px; color:#444;">${day.title}</h2>`;
+        
+        // Weather Hint (Static Logic based on Feb avg)
+        const tempLow = 2 + Math.floor(Math.random() * 2); 
+        const tempHigh = 9 + Math.floor(Math.random() * 3);
+        html += `
+            <div style="background: linear-gradient(to right, #89f7fe, #66a6ff); padding: 10px; border-radius: 12px; color: white; margin-bottom: 20px; font-size: 0.9rem; display: flex; align-items: center;">
+                <i class="fas fa-temperature-low" style="margin-right: 10px; font-size: 1.2rem;"></i>
+                <div>
+                    <strong>預測氣溫:</strong> ${tempLow}°C - ${tempHigh}°C <br>
+                    <span style="opacity: 0.9; font-size: 0.8rem;">2月海風大，建議洋蔥式穿搭。</span>
+                </div>
+            </div>
+        `;
+
+        day.events.forEach(event => {
+            let tagsHtml = '';
+            if (event.tags) {
+                event.tags.forEach(tag => {
+                    let className = 'tag';
+                    if (tag.includes('必')) className += ' must-eat';
+                    if (tag.includes('VBP')) className += ' vbp';
+                    if (tag.includes('預約')) className += ' resv';
+                    tagsHtml += `<span class="${className}">${tag}</span>`;
+                });
+            }
+
+            let guideHtml = event.guide ? `<div class="guide-tip"><i class="fas fa-lightbulb" style="color:#fbc02d; margin-right:5px;"></i> <strong>導遊悄悄話:</strong> ${event.guide}</div>` : '';
+            
+            let btnHtml = event.link ? `<a href="${event.link}" target="_blank" class="action-btn"><i class="fas fa-map-marker-alt"></i> Naver Map</a>` : '';
+
+            let icon = 'fa-map-pin';
+            if(event.type === 'food') icon = 'fa-utensils';
+            if(event.type === 'transport') icon = 'fa-bus';
+            if(event.type === 'shop') icon = 'fa-shopping-bag';
+            if(event.type === 'hotel') icon = 'fa-bed';
+
+            html += `
+                <div class="card ${event.type}">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title"><i class="fas ${icon}" style="margin-right:5px; opacity:0.7;"></i> ${event.title}</div>
+                            <div class="tags">${tagsHtml}</div>
+                        </div>
+                        <div class="card-time">${event.time}</div>
+                    </div>
+                    <div style="color: #666; font-size: 0.95rem; margin-top: 5px;">${event.desc}</div>
+                    ${guideHtml}
+                    ${btnHtml}
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        currentDayIndex = index;
+    }
+
+    function switchView(viewName, navEl) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(`view-${viewName}`).classList.add('active');
+        
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        navEl.classList.add('active');
+    }
+
+    // --- Tools Logic (LocalStorage) ---
+    function addExpense() {
+        const amt = document.getElementById('expenseAmount').value;
+        const note = document.getElementById('expenseNote').value;
+        if(!amt) return;
+
+        const expense = { amt: parseInt(amt), note: note || '雜支', id: Date.now() };
+        let expenses = JSON.parse(localStorage.getItem('busan_expenses') || '[]');
+        expenses.push(expense);
+        localStorage.setItem('busan_expenses', JSON.stringify(expenses));
+        
+        document.getElementById('expenseAmount').value = '';
+        document.getElementById('expenseNote').value = '';
+        loadExpenses();
+    }
+
+    function loadExpenses() {
+        const expenses = JSON.parse(localStorage.getItem('busan_expenses') || '[]');
+        const list = document.getElementById('expenseList');
+        let total = 0;
+        list.innerHTML = '';
+        expenses.forEach(ex => {
+            total += ex.amt;
+            const li = document.createElement('li');
+            li.innerHTML = `${ex.note}: ₩${ex.amt.toLocaleString()} <span style="color:red; cursor:pointer; margin-left:10px;" onclick="deleteExpense(${ex.id})">×</span>`;
+            list.appendChild(li);
+        });
+        document.getElementById('totalSpent').innerText = total.toLocaleString();
+    }
+
+    function deleteExpense(id) {
+        let expenses = JSON.parse(localStorage.getItem('busan_expenses') || '[]');
+        expenses = expenses.filter(e => e.id !== id);
+        localStorage.setItem('busan_expenses', JSON.stringify(expenses));
+        loadExpenses();
+    }
+
+    function saveNotes() {
+        const notes = document.getElementById('tripNotes').value;
+        localStorage.setItem('busan_notes', notes);
+    }
+
+    function loadNotes() {
+        const notes = localStorage.getItem('busan_notes');
+        if(notes) document.getElementById('tripNotes').value = notes;
+    }
+
+    // Run
+    init();
+
+</script>
+</body>
+</html>
