@@ -84,13 +84,21 @@
             transition: all 0.3s;
             border: 1px solid transparent;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
         }
+        .day-chip span.date { font-weight: bold; font-size: 1rem; }
+        .day-chip span.week { font-size: 0.7rem; color: #999; }
+
         .day-chip.active {
             background: linear-gradient(to right, var(--sunset-start) 0%, var(--sunset-end) 100%);
             color: white;
-            font-weight: bold;
             transform: scale(1.05);
         }
+        .day-chip.active span.week { color: rgba(255,255,255,0.9); }
 
         /* Cards */
         .card {
@@ -181,10 +189,6 @@
         /* Views */
         .view-section { display: none; }
         .view-section.active { display: block; }
-        
-        .weather-info-header {
-            text-align: center; font-size: 0.8rem; color: #fff; margin-bottom: 5px;
-        }
 
     </style>
 </head>
@@ -219,10 +223,24 @@
     <div id="view-tools" class="view-section">
         <div class="tools-grid">
             <div class="tool-card" style="grid-column: span 2;">
-                <h3><i class="fas fa-plane"></i> 航班資訊</h3>
-                <p><strong>去程 (2/14):</strong> CI186 15:40 - 18:50</p>
-                <p><strong>回程 (2/23):</strong> CI189 11:50 - 13:30</p>
-                <p><strong>緊急聯絡:</strong> 韓國報警 112 | 急救 119</p>
+                <h3><i class="fas fa-plane"></i> 航班資訊 (中華航空)</h3>
+                <div style="background:#f0f8ff; padding:10px; border-radius:8px; margin-bottom:10px;">
+                    <strong style="color:#0056b3;">去程 2/14 (週六)</strong><br>
+                    CI186 15:40 - 18:50<br>
+                    <span style="font-size:0.9rem; color:#666;">
+                    <i class="fas fa-plane-departure"></i> TPE 桃園 T2 (第二航廈)<br>
+                    <i class="fas fa-plane-arrival"></i> PUS 金海 <strong>國際航廈</strong>
+                    </span>
+                </div>
+                <div style="background:#fff0f5; padding:10px; border-radius:8px;">
+                    <strong style="color:#c2185b;">回程 2/23 (週一)</strong><br>
+                    CI189 11:50 - 13:30<br>
+                    <span style="font-size:0.9rem; color:#666;">
+                    <i class="fas fa-plane-departure"></i> PUS 金海 <strong>國際航廈</strong><br>
+                    <i class="fas fa-plane-arrival"></i> TPE 桃園 T2 (第二航廈)
+                    </span>
+                </div>
+                <p style="font-size:0.8rem; color:#888; margin-top:5px;">*TPE 航廈以電子機票為準，PUS 請務必前往國際航廈。</p>
             </div>
             
             <div class="tool-card" style="grid-column: span 2;">
@@ -267,17 +285,19 @@
     // --- Data Source ---
     const tripData = [
         {
-            date: "2/14 (六)",
+            date: "2/14",
+            week: "週六",
             title: "Day 1 抵達與廣安里夜景",
             events: [
-                { type: "transport", time: "15:40", title: "飛機 CI186", desc: "TPE -> PUS (18:50 抵達)" },
+                { type: "transport", time: "15:40", title: "飛機 CI186", desc: "TPE(T2) -> PUS(國際航廈) 18:50抵達" },
                 { type: "spot", time: "20:00", title: "廣安里無人機表演", desc: "每週六限定！海邊觀賞。", link: "https://map.naver.com/v5/search/Gwangalli%20Beach" },
                 { type: "food", time: "晚餐", title: "水邊最高豬肉湯飯 本店", desc: "必點：豬肉湯飯。排隊名店。", tags: ["必吃⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/%EC%88%98%EB%B3%80%EC%B5%9C%EA%B3%A0%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5" },
                 { type: "hotel", time: "住宿", title: "廣安里49 民宿", desc: "民樂水邊路 49" }
             ]
         },
         {
-            date: "2/15 (日)",
+            date: "2/15",
+            week: "週日",
             title: "Day 2 Spa Land 與購物",
             events: [
                 { type: "spot", time: "早上", title: "SPA LAND Centum City", desc: "五星級汗蒸幕。用 VBP 可免費4小時。", tags: ["VBP免費", "需自備護膚品"], link: "https://reurl.cc/gDxApR", guide: "注意：2/16-17休息，所以今天先來！裡面泡麵和甜米釀必點。" },
@@ -286,7 +306,8 @@
             ]
         },
         {
-            date: "2/16 (一)",
+            date: "2/16",
+            week: "週一",
             title: "Day 3 色彩鑑定與廣安美食",
             events: [
                 { type: "food", time: "09:00", title: "Working Holiday 早午餐", desc: "海景第一排早午餐。", link: "https://naver.me/5A3QDoxv" },
@@ -296,7 +317,8 @@
             ]
         },
         {
-            date: "2/17 (二)",
+            date: "2/17",
+            week: "週二",
             title: "Day 4 海雲台與膠囊列車",
             events: [
                 { type: "transport", time: "早上", title: "移動至海雲台 L7 飯店", desc: "先寄放行李" },
@@ -308,7 +330,8 @@
             ]
         },
         {
-            date: "2/18 (三)",
+            date: "2/18",
+            week: "週三",
             title: "Day 5 樂天樂園與青沙浦",
             events: [
                 { type: "spot", time: "白天", title: "樂天世界 / Outlet", desc: "樂園可用 VBP 兌換。", tags: ["VBP免費"], link: "https://map.naver.com/v5/search/Lotte%20World%20Busan" },
@@ -320,7 +343,8 @@
             ]
         },
         {
-            date: "2/19 (四)",
+            date: "2/19",
+            week: "週四",
             title: "Day 6 青松冰谷一日遊",
             events: [
                 { type: "transport", time: "08:00", title: "海雲台7號出口集合", desc: "一日遊團體集合點", tags: ["準時集合"] },
@@ -329,7 +353,8 @@
             ]
         },
         {
-            date: "2/20 (五)",
+            date: "2/20",
+            week: "週五",
             title: "Day 7 移動至南浦洞",
             events: [
                 { type: "transport", time: "早上", title: "移動至 Stanford Hotel", desc: "南浦洞" },
@@ -340,7 +365,8 @@
             ]
         },
         {
-            date: "2/21 (六)",
+            date: "2/21",
+            week: "週六",
             title: "Day 8 影島藝術之旅",
             events: [
                 { type: "spot", time: "上午", title: "影島 ARTE Museum", desc: "沈浸式光影藝術，媲美 TeamLab。", tags: ["必去⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/Arte%20Museum%20Busan" },
@@ -349,7 +375,8 @@
             ]
         },
         {
-            date: "2/22 (日)",
+            date: "2/22",
+            week: "週日",
             title: "Day 9 甘川文化村與松島",
             events: [
                 { type: "spot", time: "上午", title: "甘川文化村", desc: "小王子打卡點。", tags: ["必去"], link: "https://map.naver.com/v5/search/Gamcheon%20Culture%20Village" },
@@ -359,10 +386,11 @@
             ]
         },
         {
-            date: "2/23 (一)",
+            date: "2/23",
+            week: "週一",
             title: "Day 10 回程",
             events: [
-                { type: "transport", time: "11:50", title: "飛機 CI189", desc: "PUS -> TPE (13:30 抵達)", tags: ["再見釜山"] }
+                { type: "transport", time: "11:50", title: "飛機 CI189", desc: "PUS(國際航廈) -> TPE(T2) 13:30抵達", tags: ["再見釜山"] }
             ]
         }
     ];
@@ -383,7 +411,13 @@
         tripData.forEach((day, index) => {
             const chip = document.createElement('div');
             chip.className = `day-chip ${index === 0 ? 'active' : ''}`;
-            chip.innerText = day.date.split(' ')[0]; // Show only date
+            
+            // Layout for Date and Week
+            chip.innerHTML = `
+                <span class="date">${day.date}</span>
+                <span class="week">${day.week}</span>
+            `;
+
             chip.onclick = () => {
                 document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
@@ -397,7 +431,8 @@
         const container = document.getElementById('itineraryContent');
         const day = tripData[index];
         
-        let html = `<h2 style="margin-left:5px; margin-bottom:15px; color:#444;">${day.title}</h2>`;
+        // Include Weekday in Title
+        let html = `<h2 style="margin-left:5px; margin-bottom:15px; color:#444;">${day.date} (${day.week}) ${day.title}</h2>`;
         
         // Weather Hint (Static Logic based on Feb avg)
         const tempLow = 2 + Math.floor(Math.random() * 2); 
