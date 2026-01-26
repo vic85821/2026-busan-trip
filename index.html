@@ -4,14 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>釜山浪漫之旅 2026</title>
+    
+    <!-- PWA & Mobile Settings -->
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2060/2060284.png">
+    <meta name="theme-color" content="#4facfe">
+    
+    <!-- Social Share (Open Graph) -->
+    <meta property="og:title" content="釜山蔚藍之旅 2026 🌊" />
+    <meta property="og:description" content="10天9夜行程表：廣安里、海雲台、南浦洞全攻略。" />
+    <meta property="og:type" content="website" />
+
+    <!-- Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #4facfe;
             --secondary: #00f2fe;
             --sunset-start: #f6d365;
             --sunset-end: #fda085;
-            --twilight: #a18cd1;
             --bg-color: #f5f7fa;
             --card-bg: #ffffff;
             --text-main: #333;
@@ -26,93 +38,96 @@
             background: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
             margin: 0;
             padding: 0;
-            padding-bottom: 80px; /* Nav bar space */
+            padding-bottom: 90px;
             color: var(--text-main);
             min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
         }
 
         /* Header */
         header {
             background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);
-            padding: 20px;
+            padding: 20px 20px 30px 20px;
             color: white;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 100;
         }
         
-        header h1 { margin: 0; font-size: 1.5rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
-        header .subtitle { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+        header h1 { margin: 0; font-size: 1.6rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        header .subtitle { font-size: 0.9rem; opacity: 0.95; margin-top: 5px; }
         
-        /* Weather Widget Mini */
         .weather-bar {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.25);
             backdrop-filter: blur(5px);
-            border-radius: 10px;
-            padding: 8px;
-            margin-top: 10px;
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin-top: 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
         }
+        .weather-bar:active { background: rgba(255,255,255,0.4); }
 
         /* Container */
-        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; margin-top: -10px; }
 
         /* Day Selector */
         .day-scroller {
             display: flex;
             overflow-x: auto;
-            gap: 10px;
-            padding-bottom: 10px;
-            scrollbar-width: none; /* Firefox */
+            gap: 12px;
+            padding: 10px 5px;
+            scrollbar-width: none;
+            margin-bottom: 10px;
         }
         .day-scroller::-webkit-scrollbar { display: none; }
         
         .day-chip {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            white-space: nowrap;
-            font-size: 0.9rem;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 5px;
+            border-radius: 18px;
+            width: 55px;
+            flex-shrink: 0;
+            text-align: center;
             color: var(--text-sub);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-            border: 1px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            min-width: 50px;
         }
-        .day-chip span.date { font-weight: bold; font-size: 1rem; }
-        .day-chip span.week { font-size: 0.7rem; color: #999; }
+        .day-chip span.date { font-weight: 800; font-size: 1.1rem; line-height: 1.2; }
+        .day-chip span.week { font-size: 0.75rem; color: #888; margin-top: 2px; }
 
         .day-chip.active {
-            background: linear-gradient(to right, var(--sunset-start) 0%, var(--sunset-end) 100%);
+            background: linear-gradient(to bottom right, var(--sunset-start) 0%, var(--sunset-end) 100%);
             color: white;
-            transform: scale(1.05);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(253, 160, 133, 0.4);
         }
         .day-chip.active span.week { color: rgba(255,255,255,0.9); }
 
         /* Cards */
         .card {
             background: var(--card-bg);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             position: relative;
-            border-left: 5px solid transparent;
-            animation: fadeIn 0.5s ease;
+            border-left: 6px solid transparent;
+            animation: fadeIn 0.4s ease-out;
         }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         .card.spot { border-left-color: var(--accent-spot); }
         .card.food { border-left-color: var(--accent-food); }
@@ -120,73 +135,104 @@
         .card.transport { border-left-color: #666; }
 
         .card-header { display: flex; justify-content: space-between; align-items: start; }
-        .card-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; color: #333; }
-        .card-time { font-size: 0.85rem; color: #888; background: #eee; padding: 2px 6px; border-radius: 4px; }
+        .card-title { font-weight: 700; font-size: 1.15rem; margin-bottom: 6px; color: #333; line-height: 1.4; }
+        .card-time { font-size: 0.85rem; color: #777; background: #f0f2f5; padding: 4px 8px; border-radius: 6px; font-weight: 500; white-space: nowrap; }
         
-        .tags { display: flex; gap: 5px; flex-wrap: wrap; margin: 8px 0; }
-        .tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; }
-        .tag.must-eat { background: #ffeffe; color: #ff5e62; border: 1px solid #ff5e62; }
-        .tag.vbp { background: #e0f7fa; color: #0097a7; border: 1px solid #0097a7; }
-        .tag.resv { background: #fff3e0; color: #ef6c00; border: 1px solid #ef6c00; }
+        .tags { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
+        .tag { font-size: 0.75rem; padding: 3px 8px; border-radius: 6px; font-weight: 600; letter-spacing: 0.5px; }
+        .tag.must-eat { background: #fff0f0; color: #ff5e62; border: 1px solid rgba(255, 94, 98, 0.2); }
+        .tag.vbp { background: #e0f7fa; color: #00838f; border: 1px solid rgba(0, 151, 167, 0.2); }
+        .tag.resv { background: #fff8e1; color: #ff8f00; border: 1px solid rgba(255, 143, 0, 0.2); }
         
-        .guide-tip {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 0.9rem;
-            color: #555;
-            margin-top: 10px;
-            border-left: 3px solid #ffd700;
+        .desc-text { color: #555; font-size: 0.95rem; line-height: 1.5; margin-bottom: 8px; }
+
+        .copy-btn {
+            display: inline-block;
+            font-size: 0.75rem;
+            color: var(--accent-spot);
+            border: 1px solid var(--accent-spot);
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 8px;
+            cursor: pointer;
+            vertical-align: middle;
+            background: white;
         }
-        .guide-tip strong { color: #333; }
+        .copy-btn:active { background: var(--accent-spot); color: white; }
+
+        .guide-tip {
+            background: #fdfbe8;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.9rem;
+            color: #5d4037;
+            margin-top: 12px;
+            border-left: 3px solid #fbc02d;
+            display: flex;
+            align-items: start;
+        }
 
         .action-btn {
             display: inline-flex;
             align-items: center;
-            margin-top: 10px;
-            padding: 8px 12px;
-            background-color: #03C75A; /* Naver Green */
+            margin-top: 12px;
+            padding: 10px 16px;
+            background-color: #03C75A;
             color: white;
             text-decoration: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: bold;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(3, 199, 90, 0.2);
+            transition: transform 0.1s;
         }
-        .action-btn i { margin-right: 5px; }
+        .action-btn:active { transform: scale(0.98); }
 
-        /* Tools Section */
-        .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .tool-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .tool-card h3 { margin-top: 0; color: var(--text-main); font-size: 1rem; }
-        textarea, input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit; margin-bottom: 5px; }
-        .budget-display { font-size: 1.5rem; font-weight: bold; color: var(--accent-food); text-align: center; margin: 10px 0; }
+        /* Tools View */
+        .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .tool-card { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .tool-card h3 { margin-top: 0; color: var(--text-main); font-size: 1.1rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; margin-bottom: 15px; }
+        
+        .flight-box { background:#f8fbff; padding:12px; border-radius:8px; margin-bottom:10px; border: 1px solid #e1e9f5; }
+        .flight-box strong { color: #0056b3; display: block; margin-bottom: 5px; }
+        .flight-details { font-size:0.9rem; color:#555; line-height: 1.6; }
+        
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 1rem; margin-bottom: 8px; background: #fafafa; }
+        input:focus, textarea:focus { border-color: var(--primary); outline: none; background: white; }
+        
+        .budget-display { font-size: 2rem; font-weight: 800; color: var(--accent-food); text-align: center; margin: 15px 0; letter-spacing: -1px; }
+        .expense-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.95rem; }
 
-        /* Navigation Bottom */
+        .btn-secondary { background: #718096; color: white; border: none; padding: 10px; border-radius: 8px; width: 48%; font-size: 0.9rem; }
+
+        /* Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             width: 100%;
-            background: white;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            padding: 12px 0 25px 0; /* Extra padding for iPhone home bar */
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
             z-index: 200;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
         }
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 0.8rem;
-            color: #999;
-            text-decoration: none;
+            font-size: 0.75rem;
+            color: #a0aec0;
             width: 33%;
             cursor: pointer;
+            transition: color 0.2s;
         }
-        .nav-item.active { color: var(--accent-spot); }
-        .nav-item i { font-size: 1.2rem; margin-bottom: 3px; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 1.4rem; margin-bottom: 4px; }
 
-        /* Views */
         .view-section { display: none; }
         .view-section.active { display: block; }
 
@@ -194,208 +240,204 @@
 </head>
 <body>
 
-<!-- Header -->
 <header>
     <h1>釜山蔚藍之旅 🌊</h1>
     <div class="subtitle">10天9夜 | 廣安里 • 海雲台 • 南浦洞</div>
     <div class="weather-bar" onclick="window.open('https://www.accuweather.com/en/kr/busan/222888/weather-forecast/222888', '_blank')">
-        <span><i class="fas fa-cloud-sun"></i> 釜山即時天氣</span>
-        <span>點擊查看詳情 <i class="fas fa-chevron-right"></i></span>
+        <span><i class="fas fa-cloud-sun" style="color:#f6d365; margin-right:8px;"></i> 釜山即時天氣</span>
+        <i class="fas fa-chevron-right" style="opacity:0.5;"></i>
     </div>
 </header>
 
-<!-- Main Content -->
 <div class="container">
 
-    <!-- ITINERARY VIEW -->
+    <!-- 行程頁面 -->
     <div id="view-itinerary" class="view-section active">
-        <!-- Day Selector -->
         <div class="day-scroller" id="dayScroller">
-            <!-- JS will populate this -->
+            <!-- JS 動態生成日期按鈕 -->
         </div>
 
-        <div id="itineraryContent" style="margin-top: 15px;">
-            <!-- JS will populate this -->
+        <div id="itineraryContent" style="padding-bottom: 20px;">
+            <!-- JS 動態生成每日行程卡片 -->
         </div>
     </div>
 
-    <!-- TOOLS VIEW -->
+    <!-- 工具頁面 -->
     <div id="view-tools" class="view-section">
         <div class="tools-grid">
+            
+            <!-- 航班資訊 -->
             <div class="tool-card" style="grid-column: span 2;">
-                <h3><i class="fas fa-plane"></i> 航班資訊 (中華航空)</h3>
-                <div style="background:#f0f8ff; padding:10px; border-radius:8px; margin-bottom:10px;">
-                    <strong style="color:#0056b3;">去程 2/14 (週六)</strong><br>
-                    CI186 15:40 - 18:50<br>
-                    <span style="font-size:0.9rem; color:#666;">
-                    <i class="fas fa-plane-departure"></i> TPE 桃園 T2 (第二航廈)<br>
-                    <i class="fas fa-plane-arrival"></i> PUS 金海 <strong>國際航廈</strong>
-                    </span>
+                <h3><i class="fas fa-plane"></i> 航班資訊</h3>
+                <div class="flight-box">
+                    <strong><i class="fas fa-plane-departure"></i> 去程 2/14 (六)</strong>
+                    <div class="flight-details">
+                        CI186 | 15:40 - 18:50<br>
+                        TPE 桃園 <span style="color:#e53e3e; font-weight:bold;">T2</span> ➜ PUS 金海 <span style="color:#e53e3e; font-weight:bold;">國際航廈</span>
+                    </div>
                 </div>
-                <div style="background:#fff0f5; padding:10px; border-radius:8px;">
-                    <strong style="color:#c2185b;">回程 2/23 (週一)</strong><br>
-                    CI189 11:50 - 13:30<br>
-                    <span style="font-size:0.9rem; color:#666;">
-                    <i class="fas fa-plane-departure"></i> PUS 金海 <strong>國際航廈</strong><br>
-                    <i class="fas fa-plane-arrival"></i> TPE 桃園 T2 (第二航廈)
-                    </span>
+                <div class="flight-box" style="background:#fff5f7; border-color:#ffe3e8;">
+                    <strong style="color:#d53f8c;"><i class="fas fa-plane-arrival"></i> 回程 2/23 (一)</strong>
+                    <div class="flight-details">
+                        CI189 | 11:50 - 13:30<br>
+                        PUS 金海 <span style="color:#e53e3e; font-weight:bold;">國際航廈</span> ➜ TPE 桃園 <span style="color:#e53e3e; font-weight:bold;">T2</span>
+                    </div>
                 </div>
-                <p style="font-size:0.8rem; color:#888; margin-top:5px;">*TPE 航廈以電子機票為準，PUS 請務必前往國際航廈。</p>
             </div>
             
+            <!-- 住宿資訊 -->
             <div class="tool-card" style="grid-column: span 2;">
                 <h3><i class="fas fa-hotel"></i> 住宿資訊</h3>
-                <div style="font-size: 0.9rem; line-height: 1.6;">
-                    <p><strong>D1-D3 廣安里:</strong> 民樂水邊路 49 (民宿)</p>
-                    <p><strong>D4-D6 海雲台:</strong> L7 Haeundae</p>
-                    <p><strong>D7-D9 南浦:</strong> Stanford Hotel Busan</p>
+                <div style="font-size: 0.95rem; line-height: 1.8; color:#444;">
+                    <div style="margin-bottom:10px;">
+                        <span class="tag" style="background:#eee; color:#555;">D1-D3</span> <strong>廣安里49 民宿</strong><br>
+                        <span style="font-size:0.85rem; color:#666;">廣安里民樂水邊路 49 <span onclick="copyText('부산 수영구 민락수변로 49')" class="copy-btn">複製韓文</span></span>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <span class="tag" style="background:#eee; color:#555;">D4-D6</span> <strong>L7 Haeundae</strong><br>
+                        <span style="font-size:0.85rem; color:#666;">海雲台區佑洞1路 58 <span onclick="copyText('부산 해운대구 우동1로 58')" class="copy-btn">複製韓文</span></span>
+                    </div>
+                    <div>
+                        <span class="tag" style="background:#eee; color:#555;">D7-D9</span> <strong>Stanford Hotel</strong><br>
+                        <span style="font-size:0.85rem; color:#666;">中區九德路 53 <span onclick="copyText('부산 중구 구덕로 53')" class="copy-btn">複製韓文</span></span>
+                    </div>
                 </div>
             </div>
 
+            <!-- 記帳 -->
             <div class="tool-card" style="grid-column: span 2;">
-                <h3><i class="fas fa-calculator"></i> 簡易記帳</h3>
-                <div class="budget-display">₩ <span id="totalSpent">0</span></div>
-                <input type="number" id="expenseAmount" placeholder="金額 (韓幣)">
-                <input type="text" id="expenseNote" placeholder="項目 (如: 烤肉)">
-                <button onclick="addExpense()" style="width:100%; background:var(--accent-spot); color:white; border:none; padding:10px; border-radius:6px; margin-top:5px;">新增支出</button>
-                <ul id="expenseList" style="padding-left: 20px; font-size: 0.9rem; color:#555;"></ul>
+                <h3><i class="fas fa-won-sign"></i> 簡易記帳</h3>
+                <div class="budget-display">₩<span id="totalSpent">0</span></div>
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="expenseAmount" placeholder="金額" style="flex:1;">
+                    <input type="text" id="expenseNote" placeholder="項目" style="flex:2;">
+                </div>
+                <button onclick="addExpense()" style="width:100%; background:var(--accent-spot); color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; margin-top:5px;">新增支出</button>
+                <div id="expenseList" style="margin-top:15px; max-height:200px; overflow-y:auto;"></div>
             </div>
 
+            <!-- 筆記 -->
             <div class="tool-card" style="grid-column: span 2;">
                 <h3><i class="fas fa-pen"></i> 心得筆記</h3>
-                <textarea id="tripNotes" rows="6" placeholder="在這裡寫下旅行的心得..." oninput="saveNotes()"></textarea>
+                <textarea id="tripNotes" rows="6" placeholder="記錄旅行的點點滴滴..." oninput="saveNotes()"></textarea>
+            </div>
+
+            <!-- 資料備份 -->
+            <div class="tool-card" style="grid-column: span 2;">
+                <h3><i class="fas fa-save"></i> 資料管理</h3>
+                <div style="display:flex; justify-content:space-between;">
+                    <button onclick="exportData()" class="btn-secondary"><i class="fas fa-file-export"></i> 匯出備份</button>
+                    <button onclick="importData()" class="btn-secondary"><i class="fas fa-file-import"></i> 匯入資料</button>
+                </div>
+                <p style="font-size:0.8rem; color:#999; margin-top:10px; text-align:center;">*更換手機或清除瀏覽器快取前請先匯出</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Bottom Navigation -->
+<!-- 底部導覽 -->
 <div class="bottom-nav">
     <div class="nav-item active" onclick="switchView('itinerary', this)">
         <i class="fas fa-map-marked-alt"></i>
         <span>行程</span>
     </div>
     <div class="nav-item" onclick="switchView('tools', this)">
-        <i class="fas fa-toolbox"></i>
+        <i class="fas fa-suitcase"></i>
         <span>工具</span>
     </div>
 </div>
 
 <script>
-    // --- Data Source ---
+    // --- 行程資料 (已更新航廈與韓文地址) ---
     const tripData = [
         {
-            date: "2/14",
-            week: "週六",
-            title: "Day 1 抵達與廣安里夜景",
+            date: "2/14", week: "週六", title: "Day 1 抵達釜山",
             events: [
-                { type: "transport", time: "15:40", title: "飛機 CI186", desc: "TPE(T2) -> PUS(國際航廈) 18:50抵達" },
-                { type: "spot", time: "20:00", title: "廣安里無人機表演", desc: "每週六限定！海邊觀賞。", link: "https://map.naver.com/v5/search/Gwangalli%20Beach" },
-                { type: "food", time: "晚餐", title: "水邊最高豬肉湯飯 本店", desc: "必點：豬肉湯飯。排隊名店。", tags: ["必吃⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/%EC%88%98%EB%B3%80%EC%B5%9C%EA%B3%A0%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5" },
-                { type: "hotel", time: "住宿", title: "廣安里49 民宿", desc: "民樂水邊路 49" }
+                { type: "transport", time: "15:40", title: "CI186 飛機", desc: "TPE 桃園(T2) ✈️ PUS 金海(國際航廈)", guide: "出關後搭乘輕軌或計程車。" },
+                { type: "spot", time: "20:00", title: "廣安里無人機表演", desc: "廣安里海水浴場 (광안리해수욕장)", guide: "每週六限定，建議提早卡位。", link: "https://map.naver.com/v5/search/Gwangalli%20Beach" },
+                { type: "food", time: "晚餐", title: "水邊最高豬肉湯飯", desc: "本店 (수변최고돼지국밥 민락본점)", tags: ["必吃⭐⭐⭐⭐⭐", "需排隊"], link: "https://map.naver.com/v5/search/%EC%88%98%EB%B3%80%EC%B5%9C%EA%B3%A0%EB%8F%BC%EC%A7%80%EA%B5%AD%EB%B0%A5" },
+                { type: "hotel", time: "住宿", title: "廣安里49 民宿", desc: "부산 수영구 민락수변로 49" }
             ]
         },
         {
-            date: "2/15",
-            week: "週日",
-            title: "Day 2 Spa Land 與購物",
+            date: "2/15", week: "週日", title: "Day 2 汗蒸幕與購物",
             events: [
-                { type: "spot", time: "早上", title: "SPA LAND Centum City", desc: "五星級汗蒸幕。用 VBP 可免費4小時。", tags: ["VBP免費", "需自備護膚品"], link: "https://reurl.cc/gDxApR", guide: "注意：2/16-17休息，所以今天先來！裡面泡麵和甜米釀必點。" },
-                { type: "shop", time: "下午", title: "新世界百貨 Centum City", desc: "B1/B2 潮牌天堂 (Covernat, What it isn't, National Geographic)。", link: "https://map.naver.com/v5/search/Shinsegae%20Centum%20City" },
-                { type: "spot", time: "18:30", title: "Yacht Holic 遊艇體驗", desc: "享受海上夜景。", tags: ["VBP適用"], link: "https://map.naver.com/v5/search/Yacht%20Holic" }
+                { type: "spot", time: "早上", title: "SPA LAND 汗蒸幕", desc: "新世界百貨 (신세계 센텀시티)", tags: ["VBP免費", "2/16休館"], guide: "記得帶 VBP 卡。泡麵和甜米釀是必點！", link: "https://reurl.cc/gDxApR" },
+                { type: "shop", time: "下午", title: "新世界百貨 Centum City", desc: "B1/B2 潮牌區", guide: "What it isn’t, Covernat, 國家地理都在這。", link: "https://map.naver.com/v5/search/Shinsegae%20Centum%20City" },
+                { type: "spot", time: "18:30", title: "Yacht Holic 遊艇", desc: "需預約 (요트홀릭)", tags: ["VBP適用"], link: "https://map.naver.com/v5/search/Yacht%20Holic" }
             ]
         },
         {
-            date: "2/16",
-            week: "週一",
-            title: "Day 3 色彩鑑定與廣安美食",
+            date: "2/16", week: "週一", title: "Day 3 色彩鑑定與美食",
             events: [
-                { type: "food", time: "09:00", title: "Working Holiday 早午餐", desc: "海景第一排早午餐。", link: "https://naver.me/5A3QDoxv" },
-                { type: "spot", time: "11:00", title: "色彩鑑定 & 證件照", desc: "BBDI Studio / Lavieensu (西面)", link: "https://map.naver.com/v5/search/Seomyeon" },
-                { type: "food", time: "午餐", title: "Nasari Sigdang (나사리식당)", desc: "最推：海鮮總匯刀削麵。", tags: ["必吃", "海景"], link: "https://naver.me/FFSDywqU" },
-                { type: "food", time: "晚餐", title: "彥陽烤牛肉 廣安里店", desc: "傳統韓式烤牛肉。", link: "https://map.naver.com/v5/search/%EC%96%B8%EC%96%91%EB%B6%88%EA%B3%A0%EA%B8%B0%20%EA%B4%91%EC%95%88" }
+                { type: "food", time: "09:00", title: "Working Holiday", desc: "海景早午餐 (워킹홀리데이)", link: "https://naver.me/5A3QDoxv" },
+                { type: "spot", time: "11:00", title: "色彩鑑定", desc: "BBDI Studio / Lavieensu (西面)", guide: "確認預約時間，建議素顏前往。" },
+                { type: "food", time: "午餐", title: "Nasari Sigdang", desc: "海鮮刀削麵 (나사리식당 광안점)", tags: ["必吃", "海景"], link: "https://naver.me/FFSDywqU" },
+                { type: "food", time: "晚餐", title: "彥陽烤牛肉", desc: "廣安里店 (언양불고기)", link: "https://map.naver.com/v5/search/%EC%96%B8%EC%96%91%EB%B6%88%EA%B3%A0%EA%B8%B0%20%EA%B4%91%EC%95%88" }
             ]
         },
         {
-            date: "2/17",
-            week: "週二",
-            title: "Day 4 海雲台與膠囊列車",
+            date: "2/17", week: "週二", title: "Day 4 移動至海雲台",
             events: [
-                { type: "transport", time: "早上", title: "移動至海雲台 L7 飯店", desc: "先寄放行李" },
-                { type: "transport", time: "交通", title: "海岸列車 -> 松亭站", desc: "前往 Luge", tags: ["VBP適用"] },
-                { type: "spot", time: "活動", title: "Skyline Luge 滑車", desc: "玩兩趟！可以用 VBP 兌換。", tags: ["VBP免費"], link: "https://reurl.cc/3xRnKR" },
-                { type: "spot", time: "日落", title: "Busan X The Sky", desc: "最高星巴克，看日夜景交替。", tags: ["VBP免費"], link: "https://reurl.cc/jDaEm2" },
-                { type: "food", time: "晚餐", title: "味贊王烤肉 海雲台店", desc: "必點：豬頸肉、冷麵、泡菜豬肉湯。", tags: ["必吃", "需排隊"], link: "https://reurl.cc/M8zEW3" },
-                { type: "food", time: "宵夜", title: "密陽豬肉湯飯", desc: "海雲台大道上，24小時營業。", link: "https://naver.me/FMA6Dghu" }
+                { type: "transport", time: "早上", title: "換飯店", desc: "前往海雲台 L7 寄放行李" },
+                { type: "spot", time: "下午", title: "Skyline Luge 滑車", desc: "松亭站 (스카이라인루지 부산)", tags: ["VBP免費2趟"], link: "https://reurl.cc/3xRnKR" },
+                { type: "spot", time: "日落", title: "Busan X The Sky", desc: "海雲台LCT (부산엑스더스카이)", tags: ["VBP免費", "最高星巴克"], link: "https://reurl.cc/jDaEm2" },
+                { type: "food", time: "晚餐", title: "味贊王烤肉", desc: "海雲台店 (맛찬들왕소금구이 해운대점)", tags: ["必吃", "排隊名店"], guide: "必點：豬頸肉、泡菜豬肉湯。", link: "https://reurl.cc/M8zEW3" },
+                { type: "food", time: "宵夜", title: "密陽豬肉湯飯", desc: "24小時營業 (밀양순대돼지국밥)", link: "https://naver.me/FMA6Dghu" }
             ]
         },
         {
-            date: "2/18",
-            week: "週三",
-            title: "Day 5 樂天樂園與青沙浦",
+            date: "2/18", week: "週三", title: "Day 5 樂天與膠囊列車",
             events: [
-                { type: "spot", time: "白天", title: "樂天世界 / Outlet", desc: "樂園可用 VBP 兌換。", tags: ["VBP免費"], link: "https://map.naver.com/v5/search/Lotte%20World%20Busan" },
-                { type: "food", time: "點心", title: "自然道鹽麵包", desc: "尾浦站附近，必買！", tags: ["必買"], link: "https://map.naver.com/v5/search/%EC%9E%90%EC%97%B0%EB%8F%84%EC%86%8C%EA%B8%88%EB%B9%B5" },
-                { type: "transport", time: "17:00", title: "天空膠囊列車", desc: "預約代號 0731。尾浦 -> 青沙浦。", tags: ["重要預約"], link: "https://map.naver.com/v5/search/Blue%20Line%20Park" },
-                { type: "spot", time: "傍晚", title: "青沙浦平交道 & 扇貝街", desc: "拍灌籃高手平交道。", guide: "走路10分鐘可到扇貝一條街。" },
-                { type: "food", time: "晚餐", title: "道熙家 (Dohee-ga) 烤貝", desc: "推薦：綜合烤貝+海鮮拉麵。", tags: ["海景第一排"], link: "https://reurl.cc/y7AVka" },
-                { type: "food", time: "宵夜", title: "海雲台市場", desc: "海鮮煎餅、年糕 (外帶回飯店吃)。", link: "https://map.naver.com/v5/search/Haeundae%20Market" }
+                { type: "spot", time: "白天", title: "樂天世界 / Outlet", desc: "機張 (롯데월드 부산)", tags: ["VBP免費"], link: "https://map.naver.com/v5/search/Lotte%20World%20Busan" },
+                { type: "food", time: "點心", title: "自然道鹽麵包", desc: "尾浦站 (자연도소금빵)", tags: ["必買"], link: "https://map.naver.com/v5/search/%EC%9E%90%EC%97%B0%EB%8F%84%EC%86%8C%EA%B8%88%EB%B9%B5" },
+                { type: "transport", time: "17:00", title: "天空膠囊列車", desc: "尾浦 ➜ 青沙浦", tags: ["預約代號0731"], guide: "欣賞夕陽海景。", link: "https://map.naver.com/v5/search/Blue%20Line%20Park" },
+                { type: "food", time: "晚餐", title: "道熙家 烤貝", desc: "青沙浦 (도희가)", tags: ["海景第一排"], guide: "點綜合烤貝+海鮮拉麵。", link: "https://reurl.cc/y7AVka" }
             ]
         },
         {
-            date: "2/19",
-            week: "週四",
-            title: "Day 6 青松冰谷一日遊",
+            date: "2/19", week: "週四", title: "Day 6 青松一日遊",
             events: [
-                { type: "transport", time: "08:00", title: "海雲台7號出口集合", desc: "一日遊團體集合點", tags: ["準時集合"] },
-                { type: "spot", time: "全天", title: "青松冰谷 & 海岸村恰恰恰", desc: "浦頂天空步道", guide: "山區較冷，記得穿保暖。" },
-                { type: "hotel", time: "住宿", title: "L7 海雲台", desc: "續住" }
+                { type: "transport", time: "08:00", title: "一日遊集合", desc: "海雲台站 7號出口", tags: ["準時"], guide: "前往青松冰谷、浦頂天空步道。" },
+                { type: "spot", time: "全天", title: "青松冰谷", desc: "絕美冰壁拍照", guide: "山區很冷，請務必保暖。" }
             ]
         },
         {
-            date: "2/20",
-            week: "週五",
-            title: "Day 7 移動至南浦洞",
+            date: "2/20", week: "週五", title: "Day 7 移動至南浦",
             events: [
-                { type: "transport", time: "早上", title: "移動至 Stanford Hotel", desc: "南浦洞" },
-                { type: "food", time: "午餐", title: "札嘎其市場", desc: "吃海鮮！", link: "https://map.naver.com/v5/search/Jagalchi%20Market" },
-                { type: "food", time: "點心", title: "富平罐頭市場", desc: "必吃：Milgot 年糕。", tags: ["必吃"], link: "https://map.naver.com/v5/search/Bupyeong%20Kkangtong%20Market" },
-                { type: "shop", time: "下午", title: "國際市場 & 光復路", desc: "買棉被、逛飾品。預留 2-3 小時。", link: "https://map.naver.com/v5/search/Gukje%20Market" },
-                { type: "spot", time: "休息", title: "Foot Bath Cafe View", desc: "泡腳咖啡廳，緩解走路疲勞。", link: "https://map.naver.com/v5/search/Busan%20Foot%20Bath" }
+                { type: "transport", time: "早上", title: "換飯店", desc: "前往南浦洞 Stanford Hotel" },
+                { type: "food", time: "午餐", title: "札嘎其市場", desc: "海鮮大餐 (자갈치시장)", link: "https://map.naver.com/v5/search/Jagalchi%20Market" },
+                { type: "food", time: "點心", title: "富平罐頭市場", desc: "必吃 Milgot 年糕 (부평깡통시장)", tags: ["必吃"], link: "https://map.naver.com/v5/search/Bupyeong%20Kkangtong%20Market" },
+                { type: "shop", time: "下午", title: "國際市場 & 光復路", desc: "買棉被、逛飾品", guide: "預留 2-3 小時慢慢逛。" },
+                { type: "spot", time: "休息", title: "Foot Bath Cafe", desc: "足浴咖啡廳", link: "https://map.naver.com/v5/search/Busan%20Foot%20Bath" }
             ]
         },
         {
-            date: "2/21",
-            week: "週六",
-            title: "Day 8 影島藝術之旅",
+            date: "2/21", week: "週六", title: "Day 8 影島藝術",
             events: [
-                { type: "spot", time: "上午", title: "影島 ARTE Museum", desc: "沈浸式光影藝術，媲美 TeamLab。", tags: ["必去⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/Arte%20Museum%20Busan" },
-                { type: "spot", time: "下午", title: "白淺灘文化村", desc: "沿海步道，適合拍照。", link: "https://map.naver.com/v5/search/Huinnyeoul%20Culture%20Village" },
-                { type: "food", time: "下午茶", title: "Thrilling on the mug", desc: "超美海景咖啡廳。", link: "https://map.naver.com/v5/search/Thrilling%20on%20the%20mug" }
+                { type: "spot", time: "上午", title: "ARTE Museum", desc: "影島 (아르떼뮤지엄 부산)", tags: ["必去⭐⭐⭐⭐⭐"], guide: "沈浸式光影藝術。", link: "https://map.naver.com/v5/search/Arte%20Museum%20Busan" },
+                { type: "spot", time: "下午", title: "白淺灘文化村", desc: "沿海步道 (흰여울문화마을)", link: "https://map.naver.com/v5/search/Huinnyeoul%20Culture%20Village" },
+                { type: "food", time: "午茶", title: "Thrilling on the mug", desc: "海景咖啡廳", link: "https://map.naver.com/v5/search/Thrilling%20on%20the%20mug" }
             ]
         },
         {
-            date: "2/22",
-            week: "週日",
-            title: "Day 9 甘川文化村與松島",
+            date: "2/22", week: "週日", title: "Day 9 文化與纜車",
             events: [
-                { type: "spot", time: "上午", title: "甘川文化村", desc: "小王子打卡點。", tags: ["必去"], link: "https://map.naver.com/v5/search/Gamcheon%20Culture%20Village" },
-                { type: "spot", time: "體驗", title: "韓服體驗", desc: "預計換裝拍攝 1.5 小時。" },
-                { type: "transport", time: "交通", title: "Uber 至松島", desc: "約 15-20 分鐘車程。" },
-                { type: "spot", time: "下午", title: "松島海上纜車", desc: "水晶車廂看海景。", tags: ["必去⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/Songdo%20Marine%20Cable%20Car" }
+                { type: "spot", time: "上午", title: "甘川文化村", desc: "小王子 (감천문화마을)", tags: ["必去"], link: "https://map.naver.com/v5/search/Gamcheon%20Culture%20Village" },
+                { type: "spot", time: "體驗", title: "韓服體驗", desc: "換裝拍照 1.5 hr" },
+                { type: "transport", time: "交通", title: "Uber ➜ 松島", desc: "約 15-20 分鐘" },
+                { type: "spot", time: "下午", title: "松島海上纜車", desc: "水晶車廂 (송도해상케이블카)", tags: ["必去⭐⭐⭐⭐⭐"], link: "https://map.naver.com/v5/search/Songdo%20Marine%20Cable%20Car" }
             ]
         },
         {
-            date: "2/23",
-            week: "週一",
-            title: "Day 10 回程",
+            date: "2/23", week: "週一", title: "Day 10 平安回家",
             events: [
-                { type: "transport", time: "11:50", title: "飛機 CI189", desc: "PUS(國際航廈) -> TPE(T2) 13:30抵達", tags: ["再見釜山"] }
+                { type: "transport", time: "11:50", title: "CI189 飛機", desc: "PUS 金海(國際航廈) ✈️ TPE 桃園(T2)", tags: ["再見釜山"], guide: "13:30 抵達台北。" }
             ]
         }
     ];
 
-    // --- App Logic ---
+    // --- 核心邏輯 ---
     let currentDayIndex = 0;
 
     function init() {
@@ -411,17 +453,12 @@
         tripData.forEach((day, index) => {
             const chip = document.createElement('div');
             chip.className = `day-chip ${index === 0 ? 'active' : ''}`;
-            
-            // Layout for Date and Week
-            chip.innerHTML = `
-                <span class="date">${day.date}</span>
-                <span class="week">${day.week}</span>
-            `;
-
+            chip.innerHTML = `<span class="date">${day.date}</span><span class="week">${day.week}</span>`;
             chip.onclick = () => {
                 document.querySelectorAll('.day-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
                 renderItinerary(index);
+                chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             };
             scroller.appendChild(chip);
         });
@@ -431,22 +468,8 @@
         const container = document.getElementById('itineraryContent');
         const day = tripData[index];
         
-        // Include Weekday in Title
-        let html = `<h2 style="margin-left:5px; margin-bottom:15px; color:#444;">${day.date} (${day.week}) ${day.title}</h2>`;
+        let html = `<h2 style="margin:10px 5px 20px 5px; color:#2d3748; font-size:1.4rem;">${day.date} ${day.title}</h2>`;
         
-        // Weather Hint (Static Logic based on Feb avg)
-        const tempLow = 2 + Math.floor(Math.random() * 2); 
-        const tempHigh = 9 + Math.floor(Math.random() * 3);
-        html += `
-            <div style="background: linear-gradient(to right, #89f7fe, #66a6ff); padding: 10px; border-radius: 12px; color: white; margin-bottom: 20px; font-size: 0.9rem; display: flex; align-items: center;">
-                <i class="fas fa-temperature-low" style="margin-right: 10px; font-size: 1.2rem;"></i>
-                <div>
-                    <strong>預測氣溫:</strong> ${tempLow}°C - ${tempHigh}°C <br>
-                    <span style="opacity: 0.9; font-size: 0.8rem;">2月海風大，建議洋蔥式穿搭。</span>
-                </div>
-            </div>
-        `;
-
         day.events.forEach(event => {
             let tagsHtml = '';
             if (event.tags) {
@@ -459,9 +482,19 @@
                 });
             }
 
-            let guideHtml = event.guide ? `<div class="guide-tip"><i class="fas fa-lightbulb" style="color:#fbc02d; margin-right:5px;"></i> <strong>導遊悄悄話:</strong> ${event.guide}</div>` : '';
+            // 判斷是否需要「複製地址」按鈕 (如果有韓文)
+            let copyBtn = '';
+            if (event.desc && /[가-힣]/.test(event.desc)) {
+                copyBtn = `<span class="copy-btn" onclick="copyText('${event.desc}')"><i class="fas fa-copy"></i> 複製</span>`;
+            }
+
+            let guideHtml = event.guide ? `
+                <div class="guide-tip">
+                    <i class="fas fa-lightbulb" style="color:#fbc02d; margin-right:8px; margin-top:2px;"></i> 
+                    <div>${event.guide}</div>
+                </div>` : '';
             
-            let btnHtml = event.link ? `<a href="${event.link}" target="_blank" class="action-btn"><i class="fas fa-map-marker-alt"></i> Naver Map</a>` : '';
+            let btnHtml = event.link ? `<a href="${event.link}" target="_blank" class="action-btn"><i class="fas fa-map-marker-alt" style="margin-right:6px;"></i> Naver Map</a>` : '';
 
             let icon = 'fa-map-pin';
             if(event.type === 'food') icon = 'fa-utensils';
@@ -472,32 +505,44 @@
             html += `
                 <div class="card ${event.type}">
                     <div class="card-header">
-                        <div>
-                            <div class="card-title"><i class="fas ${icon}" style="margin-right:5px; opacity:0.7;"></i> ${event.title}</div>
+                        <div style="flex:1;">
+                            <div class="card-title"><i class="fas ${icon}" style="margin-right:6px; opacity:0.6; font-size:0.9em;"></i> ${event.title}</div>
                             <div class="tags">${tagsHtml}</div>
                         </div>
                         <div class="card-time">${event.time}</div>
                     </div>
-                    <div style="color: #666; font-size: 0.95rem; margin-top: 5px;">${event.desc}</div>
+                    <div class="desc-text">${event.desc} ${copyBtn}</div>
                     ${guideHtml}
                     ${btnHtml}
                 </div>
             `;
         });
-
         container.innerHTML = html;
         currentDayIndex = index;
     }
 
+    // --- 工具與功能 ---
     function switchView(viewName, navEl) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewName}`).classList.add('active');
-        
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
         navEl.classList.add('active');
+        window.scrollTo(0,0);
     }
 
-    // --- Tools Logic (LocalStorage) ---
+    function copyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            // 簡單的 Toast 提示
+            const toast = document.createElement('div');
+            toast.innerText = '已複製：' + text;
+            toast.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); color:white; padding:10px 20px; border-radius:20px; z-index:999; font-size:0.9rem;';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }).catch(err => {
+            alert('複製失敗，請手動複製');
+        });
+    }
+
     function addExpense() {
         const amt = document.getElementById('expenseAmount').value;
         const note = document.getElementById('expenseNote').value;
@@ -518,16 +563,18 @@
         const list = document.getElementById('expenseList');
         let total = 0;
         list.innerHTML = '';
-        expenses.forEach(ex => {
+        expenses.slice().reverse().forEach(ex => {
             total += ex.amt;
-            const li = document.createElement('li');
-            li.innerHTML = `${ex.note}: ₩${ex.amt.toLocaleString()} <span style="color:red; cursor:pointer; margin-left:10px;" onclick="deleteExpense(${ex.id})">×</span>`;
-            list.appendChild(li);
+            const div = document.createElement('div');
+            div.className = 'expense-item';
+            div.innerHTML = `<span>${ex.note}</span><span>₩${ex.amt.toLocaleString()} <i class="fas fa-times" style="color:#e53e3e; margin-left:8px; cursor:pointer;" onclick="deleteExpense(${ex.id})"></i></span>`;
+            list.appendChild(div);
         });
         document.getElementById('totalSpent').innerText = total.toLocaleString();
     }
 
     function deleteExpense(id) {
+        if(!confirm('確定刪除這筆紀錄？')) return;
         let expenses = JSON.parse(localStorage.getItem('busan_expenses') || '[]');
         expenses = expenses.filter(e => e.id !== id);
         localStorage.setItem('busan_expenses', JSON.stringify(expenses));
@@ -535,16 +582,50 @@
     }
 
     function saveNotes() {
-        const notes = document.getElementById('tripNotes').value;
-        localStorage.setItem('busan_notes', notes);
+        localStorage.setItem('busan_notes', document.getElementById('tripNotes').value);
     }
-
     function loadNotes() {
-        const notes = localStorage.getItem('busan_notes');
-        if(notes) document.getElementById('tripNotes').value = notes;
+        document.getElementById('tripNotes').value = localStorage.getItem('busan_notes') || '';
     }
 
-    // Run
+    // 匯出與匯入功能
+    function exportData() {
+        const data = {
+            expenses: localStorage.getItem('busan_expenses'),
+            notes: localStorage.getItem('busan_notes')
+        };
+        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `busan_trip_backup_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+    }
+
+    function importData() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = e => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = event => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    if(data.expenses) localStorage.setItem('busan_expenses', data.expenses);
+                    if(data.notes) localStorage.setItem('busan_notes', data.notes);
+                    alert('資料已成功還原！頁面將重新整理。');
+                    location.reload();
+                } catch(err) {
+                    alert('檔案格式錯誤');
+                }
+            };
+            reader.readAsText(file);
+        };
+        input.click();
+    }
+
+    // 啟動
     init();
 
 </script>
